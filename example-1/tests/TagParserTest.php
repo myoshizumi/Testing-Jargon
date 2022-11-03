@@ -7,47 +7,27 @@ use PHPUnit\Framework\TestCase;
 
 class TagParserTest extends TestCase
 {
-
-  public function test_it_parses_a_single_tag()
+  /** 
+   * @dataProvider tagsProvider 
+   */
+  public function test_it_parses_tags($input, $expected)
   {
-    $parser = new TagParser;
+    $parser = new TagParser();
 
-    $result = $parser->parse('personal');
-    $expected = ['personal'];
+    $result = $parser->parse($input);
 
     $this->assertSame($expected, $result);
   }
 
-  public function test_it_parses_a_comma_separated_list_of_tags()
+  public function tagsProvider()
   {
-    $parser = new TagParser;
-
-    $result = $parser->parse('personal, money, family');
-    $expected = ['personal', 'money', 'family'];
-
-    $this->assertSame($expected, $result);
-  }
-
-  public function test_it_parsess_a_pipe_separated_list_of_tags()
-  {
-    $parser = new TagParser;
-
-    $result = $parser->parse('personal | money | family');
-    $expected = ['personal', 'money', 'family'];
-
-    $this->assertSame($expected, $result);
-  }
-
-  public function test_spaces_are_optional()
-  {
-    $parser = new TagParser;
-
-    $result = $parser->parse('personal,money,family');
-    $expected = ['personal', 'money', 'family'];
-    $this->assertSame($expected, $result);
-
-    $result = $parser->parse('personal|money|family');
-    $expected = ['personal', 'money', 'family'];
-    $this->assertSame($expected, $result);
+    return [
+      ['personal', ['personal']],
+      ['personal, money, family', ['personal', 'money', 'family']],
+      ['personal | money | family', ['personal', 'money', 'family']],
+      ['personal,money,family', ['personal', 'money', 'family']],
+      ['personal|money|family', ['personal', 'money', 'family']],
+      ['personal!money!family', ['personal', 'money', 'family']]
+    ];
   }
 }
